@@ -1,4 +1,24 @@
-import express from "express";
+// import express from "express"
+const express = require("express");
+const db = require("better-sqlite3")("ourApp.db");
+db.pragma("journal_mode = WAL");
+
+// database setup here
+const createsTables = db.transaction(() => {
+  db.prepare(
+    `
+  CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username STRING NOT NULL UNIQUE,
+  password STRING NOT NULL
+
+  )
+  `
+  ).run();
+});
+
+createsTables();
+// database setup ends here
 
 const app = express();
 
@@ -54,13 +74,11 @@ app.post("/register", (req, res) => {
 
   if (errors.length) {
     return res.render("homepage", { errors });
-  } 
+  }
 
-//   save the new user into the database if there's no errors
+  //   save the new user into the database if there's no errors
 
-
-// log the user in by giving them a cookie
-
+  // log the user in by giving them a cookie
 });
 
 app.listen(3002);
